@@ -1,318 +1,652 @@
 # PSAU Internship — Edge AI Deployment Pipeline
 
-A collection of the **research, experiments, implementations, documentation, and presentation** produced during my internship at the **Research & Development Center, Prince Sattam bin Abdulaziz University (PSAU)**.
+A collection of the research, experiments, implementations, and documentation developed during my internship at the **Research & Development Center, Prince Sattam bin Abdulaziz University (PSAU)**.
 
-The internship focused on investigating and developing a practical **Edge AI deployment pipeline for resource-constrained embedded systems**, with particular emphasis on model optimization, conversion, deployment, and performance evaluation.
+The internship focused on investigating and developing a practical **Edge AI deployment pipeline for resource-constrained hardware**, covering the process from model training and optimization to conversion, deployment, and on-device inference.
 
-This repository serves as the **central archive for the internship work**. The larger implementations are also maintained in separate repositories on my GitHub profile.
+The work included experiments with **ESP32, AMB82-Mini, and Raspberry Pi Zero 2 W**, along with different machine-learning models, runtimes, optimization techniques, and deployment environments.
 
-## Internship Focus
+## Overview
 
-The primary objective of the internship was to investigate how AI models can be prepared and deployed on resource-constrained edge hardware.
+The broader objective of the internship was to understand the practical requirements and challenges involved in deploying machine-learning models on constrained edge devices.
 
-The work covered the complete path from:
+The work followed a general pipeline:
 
 ```text
-Dataset
-   ↓
+Problem Definition
+       ↓
+Dataset Acquisition
+       ↓
 Model Training
-   ↓
+       ↓
 Model Evaluation
-   ↓
+       ↓
 Model Optimization
-   ↓
+       ↓
 Model Conversion
-   ↓
-Embedded Deployment
-   ↓
+       ↓
+Hardware Deployment
+       ↓
 On-Device Inference
-   ↓
+       ↓
 Performance Evaluation
+       ↓
+Optimization / Iteration
 ```
 
-The work explored different hardware platforms and deployment approaches, including **ESP32, AMB82-Mini, and Raspberry Pi**.
+The experiments progressed from a small **TinyML classification workload on ESP32** to more demanding **computer-vision object detection workloads** on the AMB82-Mini and Raspberry Pi Zero 2 W.
 
-## Projects & Experiments
+---
+
+## Internship Work
+
+The internship consisted of several interconnected experiments.
 
 ### 1. ESP32 MNIST — TensorFlow Lite Micro
 
-An experimental **TinyML deployment pipeline** for running a small neural network on an ESP32.
+The initial experiment focused on deploying a small neural network to an **ESP32 microcontroller** using **TensorFlow Lite Micro (TFLM)** and **ESP-IDF**.
 
-The experiment used the MNIST dataset to train a lightweight CNN, perform **full INT8 quantization**, convert the model to TensorFlow Lite, embed the model into a C/C++ source file, and run inference directly on the ESP32 using **TensorFlow Lite Micro** and **ESP-IDF**.
+The MNIST handwritten-digit dataset was used to train a small CNN, which was then converted to TensorFlow Lite and fully quantized to **INT8** before being embedded into the ESP32 firmware.
+
+The complete pipeline was:
+
+```text
+MNIST Dataset
+      ↓
+Train Small CNN
+      ↓
+Full INT8 Quantization
+      ↓
+TensorFlow Lite Model
+      ↓
+C/C++ Model Representation
+      ↓
+ESP32 + TensorFlow Lite Micro
+      ↓
+On-Device Inference
+```
 
 The experiment demonstrated:
 
-* Training a lightweight neural network
-* TensorFlow Lite model conversion
+* Training a small neural network
+* TensorFlow Lite conversion
 * Full INT8 quantization
 * Embedded model packaging
-* TensorFlow Lite Micro inference
+* TensorFlow Lite Micro integration
+* ESP-IDF development
+* Quantized input and output handling
 * On-device inference
-* Input quantization and output dequantization
-* Embedded inference timing
+* Embedded inference timing and benchmarking
 
-This experiment was primarily a **working proof of concept** and was not part of the main internship documentation.
+The deployment was intentionally **camera-free**, using embedded MNIST test images to validate the ML deployment pipeline independently of camera and sensor integration.
 
-**Implementation:**
-[ESP32 MNIST TensorFlow Lite Micro](./esp32_mnist_tflm)
+The complete implementation is maintained separately:
 
-The experiment is also maintained as part of the internship archive and the larger ESP32 work can be found in its dedicated repository on my GitHub profile.
+**[PSAU Internship — ESP32 MNIST TFLite Micro](https://github.com/SheikhXAdil/PSAU-Internship-ESP32-MNIST-TFLiteMicro)**
 
 ---
 
-### 2. YOLOv7 Drone Detection — AMB82-Mini
+# 2. YOLO Drone Detection
 
-The main computer-vision project of the internship was the development and deployment of a **custom drone detection model** on the **AMB82-Mini** edge device.
+The second major part of the internship focused on **computer-vision-based drone detection**.
 
-A YOLOv7-based object detection model was trained using the **YOLO Drone Detection Dataset** and subsequently deployed on the AMB82-Mini.
+A custom YOLO-based object detector was trained using a publicly available drone detection dataset and subsequently deployed across different edge platforms.
 
-The work involved:
+The work progressed through several iterations:
 
-* Dataset preparation
-* YOLOv7 model training
-* Model evaluation
-* Model conversion for embedded deployment
-* Deployment to AMB82-Mini
-* Camera-based inference
-* On-device performance evaluation
-* FPS and inference benchmarking
-
-**Dataset:**
-[YOLO Drone Detection Dataset — Kaggle](https://www.kaggle.com/datasets/muki2003/yolo-drone-detection-dataset)
-
-**Implementation:**
-[YOLOv7 Drone Detection — AMB82-Mini](./yolo-drone-detection-amb82-mini)
-
-The deployment findings, performance observations, and technical analysis are documented in the internship documentation included in this repository.
-
----
-
-### 3. YOLOv7 Drone Detection — Raspberry Pi
-
-The next stage of the project extended the drone detection pipeline to a **Raspberry Pi**.
-
-The trained YOLOv7 model was adapted for deployment on the Raspberry Pi, with the implementation focusing on running inference under the considerably more constrained computational environment of the device.
-
-The work involved:
-
-* Model conversion for Raspberry Pi deployment
-* NCNN-based inference
-* Camera integration
-* Image preprocessing
-* Object detection and postprocessing
-* On-device inference
-* FPS and latency measurement
-* Resource and performance investigation
-
-This stage provided practical insight into the difference between deploying an optimized model on a dedicated embedded AI platform and running the same detection workload on a low-resource general-purpose edge computer.
-
-**Implementation:**
-[YOLOv7 Drone Detection — Raspberry Pi](./yolo-drone-detection-raspberry-pi)
-
-The Raspberry Pi implementation and its performance findings are documented in the internship documentation.
-
----
-
-### 4. YOLO11n Drone Detection — Raspberry Pi Optimization
-
-To improve the performance of the Raspberry Pi deployment, the next iteration moved from YOLOv7 to the significantly smaller **YOLO11n** model.
-
-The model was trained using the **same drone detection dataset** and evaluated as a potential replacement for the earlier YOLOv7 model.
-
-The objective was to investigate whether a smaller and more efficient model could provide better real-time performance on the Raspberry Pi while maintaining useful detection capability.
-
-The work involved:
-
-* Training YOLO11n on the drone dataset
-* Model evaluation
-* Model conversion to NCNN
-* Raspberry Pi deployment
-* Camera-based inference
-* Performance benchmarking
-* Comparison with the YOLOv7 deployment
-* Investigation of inference latency and FPS
-
-The experiment demonstrated the practical importance of **model selection and optimization for edge deployment**, where computational resources are significantly more limited than on the training machine.
-
-**Implementation:**
-[YOLO11n Drone Detection](./yolov11n-drone-detection)
-
----
+```text
+Drone Detection Dataset
+          ↓
+      YOLOv7 Training
+          ↓
+   YOLOv7-tiny Deployment
+          ↓
+       AMB82-Mini
+          ↓
+ Raspberry Pi Zero 2 W
+       + Ubuntu
+          ↓
+  Performance Investigation
+          ↓
+      YOLO11n Training
+          ↓
+     NCNN Conversion
+          ↓
+ Raspberry Pi Optimization
+```
 
 ## Dataset
 
-The primary dataset used for the drone detection experiments was the **YOLO Drone Detection Dataset** by `muki2003`.
+The drone detection experiments used the **YOLO Drone Detection Dataset** by `muki2003`:
 
-**Dataset:**
-[YOLO Drone Detection Dataset — Kaggle](https://www.kaggle.com/datasets/muki2003/yolo-drone-detection-dataset)
+**[YOLO Drone Detection Dataset — Kaggle](https://www.kaggle.com/datasets/muki2003/yolo-drone-detection-dataset)**
 
-The dataset was used for both the YOLOv7 and YOLO11n training experiments, allowing the different model approaches to be evaluated under the same dataset conditions.
+The same dataset was used for the YOLOv7 and YOLO11n experiments to provide consistent conditions when investigating different model approaches.
 
-## Documentation
+---
 
-The repository contains the complete internship documentation describing the research, methodology, experiments, deployment process, results, and findings.
+## 3. YOLOv7 Training
 
-### Technical Documentation
+The initial drone detection model was based on **YOLOv7**.
 
-[Edge AI Deployment Pipeline Documentation.pdf](./Edge%20AI%20Deployment%20Pipeline%20Documentation.pdf)
+The model was trained using the Kaggle drone detection dataset and subsequently prepared for deployment on the target edge hardware.
 
-The documentation covers the broader investigation into:
+The training notebook is preserved as part of the YOLO project:
 
-* Edge AI deployment requirements
-* Model evaluation criteria
-* Dataset considerations
-* Model optimization
+```text
+yolo-drone-detection-amb82-mini/
+└── training/
+    └── yolo-training.ipynb
+```
+
+The training work involved:
+
+* Dataset preparation
+* YOLOv7 training
+* Model evaluation
+* Model export
+* Preparing the model for edge deployment
+
+The trained model was then taken through separate deployment paths for the AMB82-Mini and Raspberry Pi Zero 2 W.
+
+---
+
+# 4. YOLOv7-tiny on AMB82-Mini
+
+The first computer-vision hardware deployment target was the **AMB82-Mini**.
+
+The deployment was based on the **provided `ObjectDetectionLoop` example sketch**. Instead of developing a complete embedded object-detection application from scratch, the example was customized to run the **YOLOv7-tiny** model for the drone-detection task.
+
+This involved adapting the existing embedded AI example to work with the custom-trained model and testing camera-based object detection directly on the AMB82-Mini.
+
+The working implementation is maintained under:
+
+```text
+yolo-drone-detection-amb82-mini/
+└── arduino_amb82/
+    └── ObjectDetectionLoop/
+```
+
+### AMB82-Mini Benchmarking Experiment
+
+A separate implementation called:
+
+```text
+ObjectDetectionLoopWithBenchmark/
+```
+
+was explored to add additional benchmarking functionality.
+
+However, this implementation caused problems on the AMB82-Mini and did **not** become the successful deployment path.
+
+The final working deployment therefore remained the customized:
+
+```text
+ObjectDetectionLoop/
+```
+
+example running the YOLOv7-tiny model.
+
+This experiment was still useful for understanding the practical limitations of modifying an embedded AI example and the challenges involved in adding additional measurement functionality to a resource-constrained device.
+
+### AMB82-Mini Testing
+
+Sample drone images used during testing are preserved in:
+
+```text
+yolo-drone-detection-amb82-mini/
+└── test_images/
+```
+
+The AMB82-Mini stage provided practical experience with:
+
+* Embedded object detection
+* Camera-based inference
+* YOLOv7-tiny deployment
+* Adapting hardware-specific AI examples
+* Embedded resource constraints
+* Real-time inference evaluation
+
+---
+
+# 5. YOLOv7 on Raspberry Pi Zero 2 W
+
+The next stage moved the drone-detection workload to a **Raspberry Pi Zero 2 W running Ubuntu**.
+
+This provided a different type of edge-computing environment from the AMB82-Mini.
+
+Instead of a microcontroller-oriented environment, the Raspberry Pi provided a Linux-based system where the model could be integrated with Python-based computer-vision tools and an optimized inference runtime.
+
+The Raspberry Pi implementation uses **NCNN** for model inference.
+
+The implementation is maintained under:
+
+```text
+yolo-drone-detection-raspberry-pi/
+```
+
+with the main components including:
+
+```text
+best.pt
+best.ncnn.param
+best.ncnn.bin
+detector.py
+```
+
+The deployment involved:
+
+* Converting the trained YOLOv7 model to NCNN
+* Running NCNN inference on the Raspberry Pi Zero 2 W
+* Capturing camera frames
+* Image preprocessing
+* Object detection
+* Bounding-box processing
+* Confidence filtering
+* Non-Maximum Suppression
+* Measuring inference performance
+* Streaming annotated detection output
+
+The deployment provided practical experience with running a custom object detector on a **resource-constrained Linux-based edge computer**.
+
+---
+
+# 6. YOLO11n Raspberry Pi Optimization
+
+The YOLOv7 Raspberry Pi deployment demonstrated that model complexity has a significant effect on inference performance when working with constrained hardware.
+
+To investigate a more efficient approach, the next iteration used **YOLO11n**, a smaller YOLO model.
+
+The model was trained using the same drone detection dataset and converted to **NCNN** for deployment on the Raspberry Pi Zero 2 W.
+
+The experiment is maintained under:
+
+```text
+yolov11n-drone-detection/
+```
+
+and contains:
+
+```text
+metadata.yaml
+model.ncnn.bin
+model.ncnn.param
+model_ncnn.py
+yolo11n_detector.py
+yolo11n_training.ipynb
+```
+
+The optimization experiment investigated:
+
+* Smaller model architectures
+* Model conversion
+* NCNN inference
+* Camera-based inference
+* Inference latency
+* FPS
+* Preprocessing overhead
+* Postprocessing overhead
+* Frame processing
+* Hardware limitations
+* Model efficiency
+
+The purpose was not simply to replace one model with another, but to investigate how **model selection affects the feasibility of real-time inference on constrained edge hardware**.
+
+---
+
+# 7. Edge AI Performance Investigation
+
+Performance evaluation was a major component of the internship.
+
+The experiments investigated the practical behavior of ML workloads on different edge platforms rather than evaluating models only in a conventional training environment.
+
+Important factors included:
+
+* Model architecture
+* Model size
+* Hardware compute capability
+* Available memory
+* Runtime compatibility
+* Input resolution
 * Quantization
 * Model conversion
-* Embedded deployment
-* Raspberry Pi deployment
-* ESP32 experimentation
-* AMB82-Mini deployment
-* Performance evaluation
-* Deployment challenges and findings
+* Preprocessing
+* Inference latency
+* Postprocessing
+* Camera I/O
+* FPS
+* Frame skipping
+* CPU limitations
 
-### Presentation
+The experiments demonstrated that **successful model deployment does not necessarily mean successful real-time deployment**.
 
-[Edge AI Deployment Pipeline Presentation.pptx](./Edge%20AI%20Deployment%20Pipeline%20Presentation.pptx)
+A model may produce correct detections while still being impractical because of its inference latency, memory requirements, preprocessing cost, or other hardware limitations.
 
-The presentation summarizes the internship work, methodology, implementations, results, and key findings.
+This was particularly evident during the Raspberry Pi experiments, where the computational cost of the YOLOv7 model motivated the investigation of the smaller YOLO11n model.
 
-## Repository Structure
+---
+
+# 8. Hardware Platforms
+
+The internship involved three main classes of edge hardware.
+
+## ESP32
+
+Used for the initial TinyML experiment:
+
+* MNIST classification
+* Small CNN
+* TensorFlow Lite Micro
+* Full INT8 quantization
+* ESP-IDF
+* Embedded inference
+
+## AMB82-Mini
+
+Used for embedded computer vision:
+
+* YOLOv7-tiny
+* Custom drone detection
+* Camera-based inference
+* Customized `ObjectDetectionLoop`
+* Embedded AI deployment
+
+## Raspberry Pi Zero 2 W
+
+Used for Linux-based edge inference:
+
+* Ubuntu
+* YOLOv7
+* YOLO11n
+* NCNN
+* Python
+* OpenCV
+* Camera-based inference
+* Performance investigation
+
+The different platforms provided useful insight into how the same general Edge AI problem changes depending on the capabilities and software environment of the target hardware.
+
+---
+
+# 9. Technologies & Tools
+
+### Machine Learning
+
+* **YOLOv7**
+* **YOLOv7-tiny**
+* **YOLO11n**
+* PyTorch
+* TensorFlow / Keras
+* TensorFlow Lite
+* TensorFlow Lite Micro
+
+### Edge AI
+
+* **NCNN**
+* TensorFlow Lite Micro
+* Model conversion
+* Quantization
+* Embedded inference
+* Performance benchmarking
+
+### Computer Vision
+
+* **OpenCV**
+* Image preprocessing
+* Letterbox resizing
+* Bounding-box processing
+* Non-Maximum Suppression
+* Camera-based inference
+
+### Embedded Development
+
+* **ESP32**
+* **AMB82-Mini**
+* ESP-IDF
+* Arduino
+* C/C++
+
+### Edge Computing
+
+* **Raspberry Pi Zero 2 W**
+* **Ubuntu**
+* Python
+* Linux-based deployment
+
+### Development & Training
+
+* Python
+* Jupyter Notebook
+* Kaggle
+* PyTorch
+* TensorFlow
+* C/C++
+
+---
+
+# 10. Key Engineering Lessons
+
+The internship provided practical experience with the complete path from an ML model to deployment on constrained hardware.
+
+Some of the major lessons included:
+
+### Model selection matters
+
+A model that performs well on a conventional computer may not be suitable for real-time inference on constrained hardware.
+
+Smaller and more efficient architectures can be more appropriate when latency and compute resources are limited.
+
+### Model conversion is part of deployment
+
+Training a model is only one stage of the process.
+
+The model may need to be converted into a format supported by the target inference runtime, such as:
+
+```text
+PyTorch
+   ↓
+Export / Conversion
+   ↓
+NCNN / TensorFlow Lite
+   ↓
+Target Hardware
+```
+
+### Quantization can be important
+
+The ESP32 experiment demonstrated the use of **full INT8 quantization** to make a neural network more suitable for microcontroller deployment.
+
+### Hardware-specific constraints matter
+
+Different edge devices require different deployment approaches.
+
+The ESP32, AMB82-Mini, and Raspberry Pi Zero 2 W provide very different environments in terms of memory, compute resources, operating systems, available runtimes, and development workflows.
+
+### Real-time performance requires more than inference speed
+
+The practical performance of an application depends on the entire pipeline:
+
+```text
+Camera
+  ↓
+Frame Capture
+  ↓
+Preprocessing
+  ↓
+Model Inference
+  ↓
+Postprocessing
+  ↓
+Display / Output
+```
+
+Optimizing only the neural-network inference stage does not necessarily optimize the complete application.
+
+### Existing examples can accelerate embedded deployment
+
+The AMB82-Mini deployment demonstrated the usefulness of starting from a hardware-provided AI example and adapting it to a custom model.
+
+The customized `ObjectDetectionLoop` provided the working foundation for the YOLOv7-tiny deployment.
+
+---
+
+# 11. Overall Deployment Pipeline
+
+The different experiments can be viewed as parts of a generalized Edge AI deployment pipeline:
+
+```text
+                  Dataset
+                     ↓
+              Model Training
+                     ↓
+              Model Evaluation
+                     ↓
+             Model Optimization
+                     ↓
+              Model Conversion
+                     ↓
+          Target Runtime Selection
+                     ↓
+              Hardware Deployment
+                     ↓
+             On-Device Inference
+                     ↓
+             Performance Testing
+                     ↓
+           Optimization / Iteration
+```
+
+The internship provided practical exposure to each of these stages through different hardware and ML workloads.
+
+---
+
+# 12. Repository Structure
+
+This archive contains the main implementations and documentation from the internship:
 
 ```text
 PSAU-Internship-Archive/
 │
 ├── esp32_mnist_tflm/
-│   └── ESP32 TensorFlow Lite Micro experiment
+│   └── ESP32 MNIST TensorFlow Lite Micro experiment
 │
 ├── yolo-drone-detection-amb82-mini/
-│   └── YOLOv7 drone detection on AMB82-Mini
+│   └── YOLOv7-tiny AMB82-Mini deployment
 │
 ├── yolo-drone-detection-raspberry-pi/
-│   └── YOLOv7 drone detection on Raspberry Pi
+│   └── YOLOv7 Raspberry Pi Zero 2 W deployment
 │
 ├── yolov11n-drone-detection/
-│   └── YOLO11n drone detection and Raspberry Pi optimization
+│   └── YOLO11n Raspberry Pi optimization experiment
 │
 ├── Edge AI Deployment Pipeline Documentation.pdf
-│   └── Complete technical internship documentation
+│   └── Detailed internship documentation
 │
 └── Edge AI Deployment Pipeline Presentation.pptx
     └── Internship presentation
 ```
 
-The repository structure reflects the progression of the work from an initial embedded ML experiment to increasingly practical **object detection deployment and optimization**.
+The individual implementations are also maintained in dedicated repositories where appropriate.
 
-## Main Technical Areas
+---
 
-Throughout the internship, I worked with:
+# 13. Documentation
 
-### Machine Learning & Computer Vision
+The complete internship research, methodology, experiments, findings, and conclusions are documented in the accompanying files:
 
-* YOLOv7
-* YOLO11n
-* Object detection
-* Model training
-* Model evaluation
-* Precision, mAP, IoU, and related metrics
-* Dataset preparation
+### Technical Documentation
 
-### Edge AI & Model Deployment
+**`Edge AI Deployment Pipeline Documentation.pdf`**
 
-* TensorFlow Lite
-* TensorFlow Lite Micro
-* NCNN
-* INT8 quantization
-* Model conversion
-* Embedded model packaging
-* On-device inference
+Contains the detailed research and technical documentation covering the Edge AI deployment pipeline, hardware, model deployment, optimization, and experimental findings.
 
-### Hardware
+### Presentation
 
-* ESP32
-* AMB82-Mini
-* Raspberry Pi
+**`Edge AI Deployment Pipeline Presentation.pptx`**
 
-### Development Environment
+Contains the presentation prepared to summarize the internship work, experiments, deployment process, and findings.
 
-* Python
-* C/C++
-* ESP-IDF
-* OpenCV
-* PyTorch
-* Kaggle
-* Raspberry Pi / Linux
+These documents provide the broader context behind the implementations preserved in this repository.
 
-## Key Findings
+---
 
-One of the major lessons from this work was that **successful model deployment on edge hardware is not simply a matter of converting a trained model**.
+# 14. Related Repositories
 
-Practical deployment requires consideration of:
+### ESP32 MNIST
 
-* Hardware computational capability
-* Available memory
-* Model size and complexity
-* Inference runtime compatibility
-* Input resolution
-* Quantization
-* Preprocessing overhead
-* Postprocessing overhead
-* Camera and I/O overhead
-* Inference latency
-* Real-world FPS
+**[PSAU Internship — ESP32 MNIST TFLite Micro](https://github.com/SheikhXAdil/PSAU-Internship-ESP32-MNIST-TFLiteMicro)**
 
-The YOLOv7 → Raspberry Pi → YOLO11n progression provided a practical demonstration of how **model architecture and optimization directly affect real-world edge inference performance**.
+Contains the complete ESP32 TinyML deployment experiment using TensorFlow Lite Micro and INT8 quantization.
 
-The detailed measurements and findings from these experiments are available in the technical documentation and presentation included in this repository.
+### YOLO Drone Detection
 
-## Internship Outcome
+**[PSAU Internship — YOLO Drone Detection: AMB82-Mini & Raspberry Pi](https://github.com/SheikhXAdil/PSAU-Internship-Yolo-Drone-Detection-AMB82-Mini-Raspberry-Pi)**
 
-The internship resulted in a reusable conceptual pipeline for taking an AI model from **training to deployment on resource-constrained hardware**.
+Contains the detailed YOLOv7, YOLOv7-tiny, and YOLO11n training and deployment work across the AMB82-Mini and Raspberry Pi Zero 2 W.
 
-The work provided hands-on experience across the complete deployment lifecycle:
+---
+
+# 15. Internship Outcome
+
+The internship provided hands-on experience with the complete **Edge AI deployment lifecycle**, from training machine-learning models to running inference directly on constrained hardware.
+
+The work progressed from a controlled TinyML experiment:
 
 ```text
-Problem
+MNIST
   ↓
-Dataset
+Small CNN
   ↓
-Model Selection
+INT8 Quantization
   ↓
-Training
+TensorFlow Lite Micro
   ↓
-Evaluation
-  ↓
-Optimization
-  ↓
-Conversion
-  ↓
-Hardware Deployment
-  ↓
-Inference
-  ↓
-Benchmarking
+ESP32
 ```
 
-Rather than focusing only on model accuracy, the internship emphasized the practical trade-offs involved in deploying AI models where **memory, compute, latency, and runtime compatibility** are constrained.
+to increasingly demanding computer-vision workloads:
 
-## Related Repositories
+```text
+Drone Dataset
+      ↓
+   YOLOv7
+      ↓
+YOLOv7-tiny
+      ↓
+ AMB82-Mini
+      ↓
+Raspberry Pi Zero 2 W
+      ↓
+    YOLO11n
+      ↓
+ Raspberry Pi Optimization
+```
 
-The individual implementations from this internship are maintained separately where appropriate.
+This progression provided practical insight into the challenges involved in deploying AI models outside conventional computing environments.
 
-This repository acts as the **central archive containing the documentation, presentation, and internship work**, while the dedicated project repositories contain the corresponding implementation code.
+The main outcome was the development of a **generalized understanding of an Edge AI deployment pipeline**, including:
 
-## Internship
+* Dataset acquisition
+* Model training
+* Model evaluation
+* Model selection
+* Quantization
+* Model conversion
+* Runtime selection
+* Hardware-specific deployment
+* Camera and sensor integration
+* On-device inference
+* Performance measurement
+* Model optimization
 
-**Organization:** Research & Development Center, Prince Sattam bin Abdulaziz University (PSAU)
+The internship demonstrated that successful Edge AI deployment requires consideration of the **entire system**, rather than the machine-learning model alone.
 
-**Focus:** Edge AI, Embedded AI, Computer Vision, Model Optimization, and AI Deployment
+---
 
-**Primary Hardware:** ESP32, AMB82-Mini, Raspberry Pi
+# 16. Status
 
-## Status
+**Completed internship archive.**
 
-**Completed internship project archive.**
+This repository preserves the research, experiments, implementations, and documentation developed during my internship at the **Research & Development Center, Prince Sattam bin Abdulaziz University (PSAU)**.
 
-This repository is preserved as a complete record of the technical work, experiments, implementations, documentation, and presentation produced during the internship.
-
-The individual experiments and deployment implementations are maintained alongside this archive to make the work easier to explore independently.
+It serves as the central archive for my work on **Edge AI deployment for resource-constrained hardware**, including the ESP32 TinyML experiment and the YOLO-based drone-detection deployments on the AMB82-Mini and Raspberry Pi Zero 2 W.
